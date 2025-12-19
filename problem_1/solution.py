@@ -14,8 +14,6 @@ def format_input(input):
         output.append((direction, steps))
     return output
 
-# print(format_input(input))
-
 def calculate_position(current_position, direction, steps):
     if direction == 'L':
         current_position -= steps
