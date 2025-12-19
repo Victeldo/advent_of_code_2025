@@ -4,6 +4,13 @@ with open('input.txt', 'r') as file:
 input = input.split('\n')
 
 
+"""
+This function formats the input into a list of tuples, each containing a direction and a number of steps.
+    Args:
+        input: The input string
+    Returns:
+        A list of tuples, each containing a direction and a number of steps
+"""
 def format_input(input):
     output = []
     for line in input:
@@ -14,6 +21,15 @@ def format_input(input):
         output.append((direction, steps))
     return output
 
+"""
+This function calculates the new position after moving in a given direction for a given number of steps. It also handles the spillover case where the position is less than 0 or greater than 99.
+    Args:
+        current_position: The current position on the range 0-99
+        direction: The direction to move in, either 'L' or 'R'
+        steps: The number of steps to move
+    Returns:
+        The new position on the range 0-99
+"""
 def calculate_position(current_position, direction, steps):
     if direction == 'L':
         current_position -= steps
@@ -28,6 +44,13 @@ def calculate_position(current_position, direction, steps):
             current_position -= 100
     return current_position
 
+"""
+This function counts the number of times the position is 0 after all the moves have been made.
+    Args:
+        input: The input string
+    Returns:
+        The number of times the position is 0
+"""
 def count_zeros(input):
     current_position = 50
     zero_count = 0
