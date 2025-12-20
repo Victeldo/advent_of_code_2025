@@ -22,30 +22,30 @@ def format_input(input):
     return output
 
 """
-This function calculates the new position after moving in a given direction for a given number of steps. It also handles the spillover case where the position is less than 0 or greater than 99.
+This function calculates the new position after moving in a given direction for a given number of steps. It also counts how many times the position is 0 while moving.
     Args:
         current_position: The current position on the range 0-99
         direction: The direction to move in, either 'L' or 'R'
         steps: The number of steps to move
     Returns:
         The new position on the range 0-99
+        The number of times the position is 0 while moving
 """
 def calculate_position(current_position, direction, steps):
+    displacement = steps if direction == 'R' else -steps
+    final_position = current_position + displacement
+
     if direction == 'L':
-        current_position -= steps
+        zero_count = abs((current_position - 1) // 100 - (final_position - 1) // 100)
+
     elif direction == 'R':
-        current_position += steps
+        zero_count = abs((final_position) // 100 - (current_position) // 100)
     
-    if current_position < 0:
-        while current_position < 0:
-            current_position += 100
-    elif current_position > 99:
-        while current_position > 99:
-            current_position -= 100
-    return current_position
+    return final_position % 100, zero_count
+
 
 """
-This function counts the number of times the position is 0 after all the moves have been made.
+This function counts the number of times the position hits 0 after all the moves have been made.
     Args:
         input: The input string
     Returns:
@@ -53,13 +53,13 @@ This function counts the number of times the position is 0 after all the moves h
 """
 def count_zeros(input):
     current_position = 50
-    zero_count = 0
+    total_zero_count = 0
     moves = format_input(input)
     for direction, steps in moves:
-        current_position = calculate_position(current_position, direction, steps)
-        if current_position == 0:
-            zero_count += 1
-    return zero_count
+        current_position, zero_count = calculate_position(current_position, direction, steps)
+        total_zero_count += zero_count
+
+    return total_zero_count
 
 zero_count = count_zeros(input)
 print(zero_count)
