@@ -2,14 +2,13 @@
 
 input = open('inputs/input.txt', 'r').read()
 
-input = input.split(',')
-
-total_sum = 0
-pairs = []
-
-for line in input:
-    pair = line.split('-')
-    pairs.append((int(pair[0]), int(pair[1])))
+def format_input(input):
+    input = input.split(',')
+    output = []
+    for line in input:
+        pair = line.split('-')
+        output.append((int(pair[0]), int(pair[1])))
+    return output
 
 def count_invalid(start, end):
     invalid_sum = 0
@@ -20,6 +19,10 @@ def count_invalid(start, end):
             if string_i[len(string_i)//2:] == string_i[:len(string_i)//2]:
                 invalid_sum += i
     return invalid_sum
+
+total_sum = 0
+
+pairs = format_input(input)
 
 
 for pair in pairs:
