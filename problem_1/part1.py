@@ -63,11 +63,3 @@ def count_zeros(input):
 
 zero_count = count_zeros(input)
 print(zero_count)
-
-### thinking out loud. if we were to manually bruteforce it, lest think about solving going left and right respectively.
-### going right is the simple case. if we are at a nonzero number and we wrap around, we just add the number of wraps (even if we land on 0)
-### going left is the tricky case. if we go left from a nonzero number, its simple, just wrap around and add the number of wraps (even if we land on 0)
-### if start at p, and move right, k times, we can calculate landing on zero as (p + k) % 100 == 0. i.e. k = (100 - p) % 100
-### if p = 0, 
-
-### if start at p, and move left, k times, we can calculate landing on zero as (p - k) % 100 == 0. i.e. k = p % 100

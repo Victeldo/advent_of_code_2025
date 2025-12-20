@@ -36,10 +36,10 @@ def calculate_position(current_position, direction, steps):
     final_position = current_position + displacement
 
     if direction == 'L':
-        zero_count = abs((current_position - 1) // 100 - (final_position - 1) // 100)
+        zero_count = (current_position - 1) // 100 - (final_position - 1) // 100
 
     elif direction == 'R':
-        zero_count = abs((final_position) // 100 - (current_position) // 100)
+        zero_count = (final_position) // 100 - (current_position) // 100
     
     return final_position % 100, zero_count
 
