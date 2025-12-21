@@ -1,20 +1,20 @@
 """
 This function checks if a new number makes the largest number larger.
     Args:
-        number: The string of numbers
+        number: The list of digits
+        test_digit: The digit to test
         digits: The number of digits to consider
     Returns:
-        True if the new number makes the largest number larger and the digit to prune, False otherwise and 0 if no digit to prune
+        The difference between the current number and the largest number, and the digit to prune
+    
+    Notes: Diff is guaranteed to be positive because we only change it if the new number is larger.
 """
+def does_new_number_make_larger(number: list[str], test_digit: str, digits: int) -> (int, int):
 
-def does_new_number_make_larger(number: list[str], test_digit: str, digits: int) -> (bool, int):
-
-    diff = 0
-    digit = 0
-
+    diff, digit = 0, 0
     curr_number = int(''.join(number))
+    
     for i in range(digits):
-        ## need to compare current number versus new number with current digit pruned. need to find the largest diff and only prune the bad digit for that.
         temp = number[:]
         temp.pop(i)
         temp.append(test_digit)
@@ -24,7 +24,6 @@ def does_new_number_make_larger(number: list[str], test_digit: str, digits: int)
             diff = temp - curr_number
     
     return diff, digit
-
 
 """
 This function finds the largest 12 digit number in a string of numbers, in forward facing order.
@@ -50,13 +49,13 @@ This function finds the total joltage of a list of battery packs.
     Returns:
         The total joltage
 """
-def total_joltage(numbers: list[str]) -> int:
+def total_joltage(numbers: list[str], digits: int) -> int:
     total_sum = 0
     for number in numbers:
-        total_sum += largest_joltage(number, 12)
+        total_sum += largest_joltage(number, digits)
     return total_sum
 
 input = open('inputs/input.txt', 'r').read()
 input = input.split('\n')
 
-print(total_joltage(input))
+print(total_joltage(input, 2))
