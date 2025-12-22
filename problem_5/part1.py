@@ -16,14 +16,14 @@ def format_input(input):
     
     return fresh_ranges, ingredients
 
-def is_fresh(fresh_ranges: list[tuple[str, str]], ingredient: int) -> set[int]:
+def is_fresh(fresh_ranges: list[tuple[int, int]], ingredient: int) -> bool:
     for range_id in fresh_ranges:
         if range_id[0] <= ingredient <= range_id[1]:
             return True
     return False
 
 
-def count_fresh_ingredients(ingredients: list[int], fresh_list: set[int]) -> int:
+def count_fresh_ingredients(ingredients: list[int], fresh_ranges: list[tuple[int, int]]) -> int:
     count = 0
     for ingredient in ingredients:
         if is_fresh(fresh_ranges, ingredient):
