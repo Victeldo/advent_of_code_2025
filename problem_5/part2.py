@@ -18,24 +18,15 @@ def format_input(input):
 
 
 def find_clean_ranges(fresh_ranges: list[list[int, int]]) -> list[list[int, int]]:
-    active_ranges = []
-    for range_id in fresh_ranges:
-        overlap = False
-        if not active_ranges:
-            active_ranges.append(range_id)
-            continue
-        for active_range in active_ranges:
-            if range_id[0] >= active_range[0] and range_id[1] <= active_range[1]:
-                overlap = True
-                break
-            if range_id[0] >= active_range[0] and range_id[0] <= active_range[1] and range_id[1] > active_range[1]:
-                active_range[1] = range_id[1]
-                overlap = True
-                break
-
-        if not overlap:
-            active_ranges.append(range_id)
-        
+    
+    active_ranges = [fresh_ranges[0]]
+    
+    # can significantly simplify to just check if there is a right overlap, and if so, merge the ranges, otherwise add the range to the list.
+    for start, end in fresh_ranges[1:]:
+        if start <= active_ranges[-1][1]:
+            active_ranges[-1][1] = max(active_ranges[-1][1], end)
+        else:
+            active_ranges.append([start, end])
     return active_ranges
 
 input = open('inputs/input.txt', 'r').read()
