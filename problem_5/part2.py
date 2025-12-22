@@ -16,9 +16,7 @@ def format_input(input):
     return fresh_ranges, ingredients
 
 def find_clean_ranges(fresh_ranges: list[list[int, int]]) -> list[list[int, int]]:
-    
     active_ranges = [fresh_ranges[0]]
-
     for start, end in fresh_ranges[1:]:
         if start <= active_ranges[-1][1]:
             active_ranges[-1][1] = max(active_ranges[-1][1], end)
