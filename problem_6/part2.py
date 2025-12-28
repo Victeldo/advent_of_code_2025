@@ -6,17 +6,17 @@
 #     operators = grid.pop()
 #     return grid, operators
 
-def add_problems(numbers, index):
+def add_problems(numbers):
     total_score = 0
     for number in numbers:
-        total_score += number[index]
+        total_score += number
     
     return total_score
 
-def multiply_problems(numbers, index):
+def multiply_problems(numbers):
     total_score = 1
     for number in numbers:
-        total_score *= number[index]
+        total_score *= number
     
     return total_score
 
@@ -149,8 +149,8 @@ def format_numbers(grid, index):
         concatenated = ''
         for number in numbers:
             concatenated += number[digit]
-        formatted_numbers.append(concatenated.strip())
-    print(formatted_numbers)
+        formatted_numbers.append(int(concatenated.strip()))
+    return(formatted_numbers)
 
     # find longest
     # longest = max(numbers, key=len)
@@ -181,7 +181,7 @@ def format_numbers(grid, index):
     #     cleaned_numbers.append(int(concatenated))
 
 
-input = open('inputs/input1.txt', 'r').read()
+input = open('inputs/input.txt', 'r').read()
 input = input.split('\n')
 # grid, operators = format_grid(input)
 
@@ -189,8 +189,17 @@ input = input.split('\n')
 whitespace_columns = find_whitespace_columns(input)
 
 grid, operators = format_grid(input, whitespace_columns)
+total = 0
+for index, operator in enumerate(operators):
+    numbers = format_numbers(grid, index)
+
+    if operator == '+':
+        total += add_problems(numbers)
+    elif operator == '*':
+        total += multiply_problems(numbers)
+print(total)
 # print(grid)
-print(format_numbers(grid, 3))
+# print(format_numbers(grid, 3))
 # print(operators)
 
 
