@@ -1,10 +1,10 @@
-def format_grid(input):
-    grid = []
-    for line in input:
-        values = line.split()
-        grid.append(values)
-    operators = grid.pop()
-    return grid, operators
+# def format_grid(input):
+#     grid = []
+#     for line in input:
+#         values = line.split()
+#         grid.append(values)
+#     operators = grid.pop()
+#     return grid, operators
 
 def add_problems(numbers, index):
     total_score = 0
@@ -48,33 +48,50 @@ so given some column of numbers in strings, we must do the following:
 3. convert the concatenated string into an integer and add to a list.
 4. repeat this for all columns to get all the numbers.
 5. perform the operations in the order of the operators.
+6. simplest way is to go back to the original input grid, and just verify if the second longest is on the left or right.
 """
 
-def format_numbers(grid, index):
-    numbers = []
 
-    ### raw numbers
-    for row in grid:
-        numbers.append(row[index])
-    
-    # find longest and add trailing #s
-    longest = max(numbers, key=len)
-    for idx, number in enumerate(numbers):
-        if len(number) < len(longest):
-            numbers[idx] += '#' * (len(longest) - len(number))
-    
-    ## string concatenate each number top to bottom by string index, skipping the #s
+"""
+make a matrix, take the transpose, then do the same cleanup?
+"""
 
-    cleaned_numbers = []
+# def format_numbers(grid, index):
+#     numbers = []
 
-    for i in range(len(numbers[0])):
-        concatenated = ''
-        for idx, number in enumerate(numbers):
-            if number[i] != '#':
-                concatenated += numbers[idx][i]
-        cleaned_numbers.append(int(concatenated))
+#     ### raw numbers
+#     for row in grid:
+#         numbers.append(row[index])
     
-    print(cleaned_numbers)
+#     # find longest
+#     longest = max(numbers, key=len)
+    
+#     # if all numbers not same length
+#     if not all(len(number) == len(longest) for number in numbers):
+#         shortest = min(numbers, key=len)
+#         longest_index = numbers.index(longest)
+#         shortest_index = numbers.index(shortest)
+    
+#     ## get the index of longest and shortest number in original input.
+    
+
+#     ## add trailing #s to the shorter numbers
+#     for idx, number in enumerate(numbers):
+#         if len(number) < len(longest):
+#             numbers[idx] += '#' * (len(longest) - len(number))
+    
+#     ## string concatenate each number top to bottom by string index, skipping the #s
+
+#     cleaned_numbers = []
+
+#     for i in range(len(numbers[0])):
+#         concatenated = ''
+#         for idx, number in enumerate(numbers):
+#             if number[i] != '#':
+#                 concatenated += numbers[idx][i]
+#         cleaned_numbers.append(int(concatenated))
+    
+    # print(cleaned_numbers)
 
     # ## string concatenate each number top to bottom by string index (now that all of equal length). row_0 + row_1 + row_2 + ...
     # for i in range(len(numbers[0])):
@@ -85,8 +102,104 @@ def format_numbers(grid, index):
     
     # return numbers
 
+# def format_grid(input):
+#     grid = []
+#     for line in input:
+#         values = line.split()
+#         grid.append(values)
+#     operators = grid.pop()
+#     return grid, operators
+
+
+def find_whitespace_columns(input):
+    whitespace_columns = []
+    for i in range(len(input[0])):
+        if all(input[j][i] == ' ' for j in range(len(input))):
+            whitespace_columns.append(i)
+    return whitespace_columns
+
+def format_grid(input, whitespace_columns):
+    grid = []
+    for line in input:
+        values = []
+        current_value = ''
+        for i in range(len(line)):
+            if i in whitespace_columns:
+                values.append(current_value)
+                current_value = ''
+            else:
+                current_value += line[i]
+        values.append(current_value)
+        grid.append(values)
+    operators = grid.pop()
+    operators = [operators.strip() for operators in operators]
+    return grid, operators
+
+def format_numbers(grid, index):
+    numbers = []
+
+    ### raw numbers
+    for row in grid:
+        numbers.append(row[index])
+    # print(numbers)
+
+    ## transpose the digits
+    formatted_numbers = []
+    for digit in range(len(numbers[0])):
+        concatenated = ''
+        for number in numbers:
+            concatenated += number[digit]
+        formatted_numbers.append(concatenated.strip())
+    print(formatted_numbers)
+
+    # find longest
+    # longest = max(numbers, key=len)
+    
+    # # if all numbers not same length
+    # if not all(len(number) == len(longest) for number in numbers):
+    #     shortest = min(numbers, key=len)
+    #     longest_index = numbers.index(longest)
+    #     shortest_index = numbers.index(shortest)
+    
+    ## get the index of longest and shortest number in original input.
+    
+
+    ## add trailing #s to the shorter numbers
+    # for idx, number in enumerate(numbers):
+    #     if len(number) < len(longest):
+    #         numbers[idx] += '#' * (len(longest) - len(number))
+    
+    ## string concatenate each number top to bottom by string index, skipping the #s
+
+    # cleaned_numbers = []
+
+    # for i in range(len(numbers[0])):
+    #     concatenated = ''
+    #     for idx, number in enumerate(numbers):
+    #         if number[i] != '#':
+    #             concatenated += numbers[idx][i]
+    #     cleaned_numbers.append(int(concatenated))
+
 
 input = open('inputs/input1.txt', 'r').read()
 input = input.split('\n')
-grid, operators = format_grid(input)
-print(format_numbers(grid, 0))
+# grid, operators = format_grid(input)
+
+# print(format_numbers(grid, 0))
+whitespace_columns = find_whitespace_columns(input)
+
+grid, operators = format_grid(input, whitespace_columns)
+# print(grid)
+print(format_numbers(grid, 3))
+# print(operators)
+
+
+"""
+two pass approach. A, find out if index for second largest is not whitespace for same index on input.
+If its whitespace, we add # on the left, if not, on the right.
+
+
+
+Or just do a matrix transpose. we start by splitting on whitespace columns, then we format the numbers
+
+"""
