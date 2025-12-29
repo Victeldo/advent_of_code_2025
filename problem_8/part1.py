@@ -1,102 +1,115 @@
-### need to re-order junction boxes greedily based on shortest distance
-
-### practice input has 20 values, need to make 10 pairs
-
-### real has 1000 values, need to make 1000 pairs
-import time
 
 """
-pseudocode:
-first make X pairs of the shortest distance
-then form circuits based on pairs
-then find 3 largest circuits (chain together pairs)
-then merge circuits if they share a point.
-then return product of 3 largest circuits
+This function finds the euclidean distance between two points in 3D space.
+    Args:
+        point1: The first point
+        point2: The second point
+    Returns:
+        The distance between the two points
 """
-
-MAX_PAIRS = 1000
-
 def find_distance(point1, point2):
     return ((point1[0] - point2[0])**2  + (point1[1] - point2[1])**2 + (point1[2] - point2[2])**2)**0.5
 
-shortest_distances = [] ## (point1, point2, distance)
+"""
+This function formats the input into a list of points.
+    Args:
+        input: The input string
+    Returns:
+        A list of points
+"""
+def format_input(input):
+    input = input.split('\n')
+    points = []
+    for line in input:
+        point = line.split(',')
+        point = (int(point[0]), int(point[1]), int(point[2]))
+        points.append(point)
+    return points
 
-# first format the points
-input = open('inputs/input.txt', 'r').read()
-points = input.split('\n')
-for idx, point in enumerate(points):
-    point = point.split(',')
-    point = (int(point[0]), int(point[1]), int(point[2]))
-    points[idx] = point
-    print("in iteration, idx:", idx)
+"""
+This function finds the shortest distances between all points.
+    Args:
+        points: The list of points
+    Returns:
+        A sorted list of shortest distances between all points
+"""
+def find_shortest_distances(points):
+    shortest_distances = []
+    for i in range(len(points) - 1):
+        for j in range(i + 1, len(points)):
+            distance = find_distance(points[i], points[j])
+            shortest_distances.append((points[i], points[j], distance))
+    shortest_distances.sort(key=lambda x: x[2])
+    return shortest_distances
 
-# print(points)
-for i in range(len(points) - 1):
-    for j in range(i + 1, len(points)):
-        print("in nested for loop, i:", i, "j:", j)
-        distance = find_distance(points[i], points[j])
-        # if not any((points[i], points[j]) == (a, b) or (points[i], points[j]) == (b, a) for a, b, _ in shortest_distances):
-        #     shortest_distances.append((points[i], points[j], distance))
-        shortest_distances.append((points[i], points[j], distance))
+"""
+This function finds the circuits based on the shortest distances.
+    Args:
+        shortest_distances: The list of shortest distances
+    Returns:
+        A list of circuits, where each circuit is a list of points
 
-shortest_distances.sort(key=lambda x: x[2])
-
-print("out of nested for loop")
-# for distance in shortest_distances:
-#     print(distance)
-
-# print(shortest_distances[0])
-
-circuits = [] ## list of lists, each list is a circuit
-
-## append to circuit if point 1 or point 2 exists in the circuit. if not in any circuits, create a new circuit.
-
-def point_in_circuit(circuit, point1, point2):
-    if point1 in circuit:
-        return 1
-    if point2 in circuit:
-        return 2
-    else:
-        return 0
-
-for i in range(MAX_PAIRS):
-    point1 = shortest_distances[i][0]
-    point2 = shortest_distances[i][1]
-    if len(circuits) == 0:
-        circuits.append([point1, point2])
-    else:
-        not_in_circuit = True
-        print("in else loop" + str(time.time()))
-        for circuit in circuits:
-            if point1 in circuit and point2 in circuit:
-                not_in_circuit = False
-                break
-            if point1 in circuit and point2 not in circuit:
-                circuit.append(point2)
-                not_in_circuit = False
-            elif point2 in circuit and point1 not in circuit:
-                circuit.append(point1)
-                not_in_circuit = False
-        if not_in_circuit:
+    Note: This function does not merge circuits if they share a point.
+"""
+def find_circuits(shortest_distances):
+    circuits = []
+    for i in range(MAX_PAIRS):
+        point1 = shortest_distances[i][0]
+        point2 = shortest_distances[i][1]
+        if len(circuits) == 0:
             circuits.append([point1, point2])
-print("out of for loop")
-## now need to merge circuits if they share a point.
-
-for i in range(len(circuits) - 1):
-    j = i + 1
-    while j < len(circuits):
-        print("in while loop" + str(i) + " " + str(j))
-        circuit_set_i = set(circuits[i])
-        circuit_set_j = set(circuits[j])
-        if len(circuit_set_i & circuit_set_j) > 0:
-            circuits[i] = list(circuit_set_i | circuit_set_j)
-            circuits.pop(j)
-            j = i + 1
         else:
-            j += 1
+            not_in_circuit = True
+            for circuit in circuits:
+                if point1 in circuit and point2 in circuit:
+                    not_in_circuit = False
+                    break
+                elif point1 in circuit and point2 not in circuit:
+                    circuit.append(point2)
+                    not_in_circuit = False
+            if not_in_circuit:
+                circuits.append([point1, point2])
+    return circuits
+
+"""
+This function merges circuits if they share a point.
+    Args:
+        circuits: The list of circuits
+    Returns:
+        A list of circuits, where each circuit is a list of points
+"""
+def merge_circuits(circuits):
+    for i in range(len(circuits) - 1):
+        j = i + 1
+        while j < len(circuits):
+            circuit_set_i = set(circuits[i])
+            circuit_set_j = set(circuits[j])
+            if len(circuit_set_i & circuit_set_j) > 0:
+                circuits[i] = list(circuit_set_i | circuit_set_j)
+                circuits.pop(j)
+                j = i + 1
+            else:
+                j += 1
+    return circuits
+
+MAX_PAIRS = 1000
+input = open('inputs/input.txt', 'r').read()
+
+points = format_input(input)
+
+# find and sort shortest distances between all points
+shortest_distances = find_shortest_distances(points)
+
+# form circuits based on shortest distances with upper limit of MAX_PAIRS
+raw_circuits = find_circuits(shortest_distances)
+
+# merge circuits if they share a point
+circuits = merge_circuits(raw_circuits)
 
 circuits.sort(key=len, reverse=True)
 total = 1
 for i in range(3):
     total *= len(circuits[i])
 print(total)
+
+
